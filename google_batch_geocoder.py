@@ -21,7 +21,7 @@ COMPONENT_RESTRICTIONS_COLUMNS_NAME = {}
 NEW_COLUMNS_NAME = ["Lat", "Long", "Error", "formatted_address", "location_type"]
 
 # delimiter for input csv file
-DELIMITER = ","
+DELIMITER = ";"
 
 # Automatically retry X times when GeocoderErrors occur (sometimes the API Service return intermittent failures).
 RETRY_COUNTER_CONST = 100
