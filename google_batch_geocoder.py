@@ -107,11 +107,6 @@ def process_addresses_from_csv():
 
 def geocode_address(geo_locator, line_address, component_restrictions=None, retry_counter=1):
     try:
-        # if not using Google Map API For Work (Standard instead of Premium) you will raise an OVER_QUERY_LIMIT
-        # due to the quotas request per seconds. So we have to sleep 500 ms between each request to Geocoding Service.
-        # if not GOOGLE_SECRET_KEY:
-        #    time.sleep(1.5)
-
         # the geopy GoogleV3 geocoding call
         location = geo_locator.geocode(line_address, components=component_restrictions)
 
