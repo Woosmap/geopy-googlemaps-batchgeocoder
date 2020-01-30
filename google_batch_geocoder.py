@@ -24,7 +24,7 @@ NEW_COLUMNS_NAME = ["Lat", "Long", "Error", "formatted_address", "location_type"
 DELIMITER = ";"
 
 # Automatically retry X times when GeocoderErrors occur (sometimes the API Service return intermittent failures).
-RETRY_COUNTER_CONST = 100
+RETRY_COUNTER_CONST = 5
 
 # name for output csv file
 INPUT_CSV_FILE = "hairdresser_sample_addresses.csv"
@@ -128,14 +128,22 @@ def geocode_address(geo_locator, line_address, component_restrictions=None, retr
 
     # To catch generic geocoder errors.
     except (ValueError, GeocoderQuotaExceeded, ConfigurationError, GeocoderParseError) as error:
-        location_result = {"Lat": 0, "Long": 0, "Error": error.message, "formatted_address": "", "location_type": ""}
+        if hasattr(error, 'message'):
+            error_message = error.message
+        else:
+            error_message = error
+        location_result = {"Lat": 0, "Long": 0, "Error": error_message, "formatted_address": "", "location_type": ""}
 
     # To retry because intermittent failures and timeout sometimes occurs
     except (GeocoderTimedOut, GeocoderQueryError) as geocodingerror:
         if retry_counter < RETRY_COUNTER_CONST:
             return geocode_address(geo_locator, line_address, component_restrictions, retry_counter + 1)
         else:
-            location_result = {"Lat": 0, "Long": 0, "Error": geocodingerror.message, "formatted_address": "",
+            if hasattr(geocodingerror, 'message'):
+                error_message = geocodingerror.message
+            else:
+                error_message = geocodingerror
+            location_result = {"Lat": 0, "Long": 0, "Error": error_message, "formatted_address": "",
                                "location_type": ""}
     # To retry because intermittent failures and timeout sometimes occurs
     except BaseException as error:
